@@ -4,8 +4,8 @@
  * @authorLink undefined
  * @donate undefined
  * @patreon undefined
- * @website 
- * @source 
+ * @website https://github.com/asportnoy/defaultreplyping
+ * @source https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -32,7 +32,7 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.0","description":"Set a reply ping default per-server","github":"","github_raw":""},"changelog":[],"main":"index.js"};
+    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.1","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[],"main":"index.js"};
 
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
