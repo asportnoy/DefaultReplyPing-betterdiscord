@@ -32,7 +32,7 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.3","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[{"title":"1.0.3","items":["Fixed issue with 1.0.2"]},{"title":"1.0.2","items":["Reply pings are always disabled for your own messages."]}],"main":"index.js"};
+    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.4","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[{"title":"Bug Fixes","items":["Removed a non-existent double space"]}],"main":"index.js"};
 
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
