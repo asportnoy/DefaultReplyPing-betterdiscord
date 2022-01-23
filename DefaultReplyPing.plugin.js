@@ -32,7 +32,7 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.4","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[{"title":"Bug Fixes","items":["Removed a non-existent double space"]}],"main":"index.js"};
+    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.5","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[{"title":"Bug Fixes","items":["Replaced depricated `DiscordAPI` library."]}],"main":"index.js"};
 
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
@@ -75,7 +75,7 @@ module.exports = (() => {
         onStart() {
             Patcher.before(WebpackModules.getByProps('createPendingReply'), 'createPendingReply', (t, a) => {
                 const currentGuild = DiscordModules.SelectedGuildStore.getGuildId();
-                const currentUser = DiscordAPI.currentUser.id;
+                const currentUser = DiscordModules.UserStore.getCurrentUser();
 
                 const replyUser = a && a[0] && a[0].message && a[0].message.author && a[0].message.author.id;
 
