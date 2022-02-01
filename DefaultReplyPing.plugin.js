@@ -32,96 +32,180 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"info":{"name":"DefaultReplyPing","authors":[{"name":"asportnoy","discord_id":"489484338514100234"}],"version":"1.0.5","description":"Set a reply ping default per-server","github":"https://github.com/asportnoy/defaultreplyping","github_raw":"https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js"},"changelog":[{"title":"Bug Fixes","items":["Replaced depricated `DiscordAPI` library."]}],"main":"index.js"};
+	const config = {
+		info: {
+			name: 'DefaultReplyPing',
+			authors: [{name: 'asportnoy', discord_id: '489484338514100234'}],
+			version: '1.0.6',
+			description: 'Set a reply ping default per-server',
+			github: 'https://github.com/asportnoy/defaultreplyping',
+			github_raw:
+				'https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js',
+		},
+		changelog: [
+			{
+				title: 'New Stuff',
+				items: ['Reply pings will always be disabled in DMs'],
+			},
+			{
+				title: 'Bug Fixes',
+				type: 'fixed',
+				items: [
+					'Reply pings will always be disabled for your own messages',
+				],
+			},
+		],
+		main: 'index.js',
+	};
 
-    return !global.ZeresPluginLibrary ? class {
-        constructor() {this._config = config;}
-        getName() {return config.info.name;}
-        getAuthor() {return config.info.authors.map(a => a.name).join(", ");}
-        getDescription() {return config.info.description;}
-        getVersion() {return config.info.version;}
-        load() {
-            BdApi.showConfirmationModal("Library Missing", `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-                confirmText: "Download Now",
-                cancelText: "Cancel",
-                onConfirm: () => {
-                    require("request").get("https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", async (error, response, body) => {
-                        if (error) return require("electron").shell.openExternal("https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js");
-                        await new Promise(r => require("fs").writeFile(require("path").join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"), body, r));
-                    });
-                }
-            });
-        }
-        start() {}
-        stop() {}
-    } : (([Plugin, Api]) => {
-        const plugin = (Plugin, Library) => {
-    const {
-        Patcher,
-        Logger,
-        Settings,
-        WebpackModules,
-        DiscordModules,
-        DiscordAPI
-    } = Library;
-    return class DefaultReplyPing extends Plugin {
-        constructor() {
-            super();
-            this.defaultSettings = {};
-            this.defaultSettings.override = '';
-            this.defaultSettings.default = true;
-        }
+	return !global.ZeresPluginLibrary
+		? class {
+				constructor() {
+					this._config = config;
+				}
+				getName() {
+					return config.info.name;
+				}
+				getAuthor() {
+					return config.info.authors.map(a => a.name).join(', ');
+				}
+				getDescription() {
+					return config.info.description;
+				}
+				getVersion() {
+					return config.info.version;
+				}
+				load() {
+					BdApi.showConfirmationModal(
+						'Library Missing',
+						`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+						{
+							confirmText: 'Download Now',
+							cancelText: 'Cancel',
+							onConfirm: () => {
+								require('request').get(
+									'https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js',
+									async (error, response, body) => {
+										if (error)
+											return require('electron').shell.openExternal(
+												'https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js',
+											);
+										await new Promise(r =>
+											require('fs').writeFile(
+												require('path').join(
+													BdApi.Plugins.folder,
+													'0PluginLibrary.plugin.js',
+												),
+												body,
+												r,
+											),
+										);
+									},
+								);
+							},
+						},
+					);
+				}
+				start() {}
+				stop() {}
+		  }
+		: (([Plugin, Api]) => {
+				const plugin = (Plugin, Library) => {
+					const {
+						Patcher,
+						Logger,
+						Settings,
+						WebpackModules,
+						DiscordModules,
+						DiscordAPI,
+					} = Library;
+					return class DefaultReplyPing extends Plugin {
+						constructor() {
+							super();
+							this.defaultSettings = {};
+							this.defaultSettings.override = '';
+							this.defaultSettings.default = true;
+						}
 
-        onStart() {
-            Patcher.before(WebpackModules.getByProps('createPendingReply'), 'createPendingReply', (t, a) => {
-                const currentGuild = DiscordModules.SelectedGuildStore.getGuildId();
-                const currentUser = DiscordModules.UserStore.getCurrentUser();
+						onStart() {
+							Patcher.before(
+								WebpackModules.getByProps('createPendingReply'),
+								'createPendingReply',
+								(t, a) => {
+									const currentGuild =
+										DiscordModules.SelectedGuildStore.getGuildId();
+									const currentUser =
+										DiscordModules.UserStore.getCurrentUser()
+											.id;
 
-                const replyUser = a && a[0] && a[0].message && a[0].message.author && a[0].message.author.id;
+									const replyUser = a[0]?.message?.author?.id;
 
-                const defaultSetting = this.settings.default;
-                const isGuildOverride = currentGuild && this.settings.override.split(' ').includes(currentGuild);
-                const isCurrentUser = currentUser == replyUser;
+									const defaultSetting =
+										this.settings.default;
+									const isGuildOverride =
+										currentGuild &&
+										this.settings.override
+											.split(' ')
+											.includes(currentGuild);
+									const isCurrentUser =
+										currentUser == replyUser;
 
-                let result = defaultSetting;
-                if (isCurrentUser) {
-                    result = false;
-                } else {
-                    if (isGuildOverride) {
-                        result = !defaultSetting;
-                    }
-                }
-                a[0].shouldMention = result;
-            });
-        }
+									let result = defaultSetting;
+									if (isCurrentUser || !currentGuild) {
+										result = false;
+									} else {
+										if (isGuildOverride) {
+											result = !defaultSetting;
+										}
+									}
+									a[0].shouldMention = result;
+								},
+							);
+						}
 
-        onStop() {
-            Patcher.unpatchAll();
-        }
+						onStop() {
+							Patcher.unpatchAll();
+						}
 
-        getSettingsPanel() {
-            return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                new Settings.SettingGroup("Reply Ping Settings", {shown: true}).append(
-                    new Settings.Dropdown("Default", "If the server doesn't have an override, this will be used.", this.settings.default, [{
-                            label: "On",
-                            value: true
-                        },
-                        {
-                            label: "Off",
-                            value: false
-                        },
-                    ], (e) => {
-                        this.settings.default = e;
-                    }),
-                    new Settings.Textbox("Override list", "These servers will do the opposite of the default option. This should be a list of server IDs separated by spaces.", this.settings.override, (e) => {
-                        this.settings.override = e;
-                    })
-                )
-            );
-        }
-    };
-};
-        return plugin(Plugin, Api);
-    })(global.ZeresPluginLibrary.buildPlugin(config));
+						getSettingsPanel() {
+							return Settings.SettingPanel.build(
+								this.saveSettings.bind(this),
+								new Settings.SettingGroup(
+									'Reply Ping Settings',
+									{shown: true},
+								).append(
+									new Settings.Dropdown(
+										'Default',
+										"If the server doesn't have an override, this will be used.",
+										this.settings.default,
+										[
+											{
+												label: 'On',
+												value: true,
+											},
+											{
+												label: 'Off',
+												value: false,
+											},
+										],
+										e => {
+											this.settings.default = e;
+										},
+									),
+									new Settings.Textbox(
+										'Override list',
+										'These servers will do the opposite of the default option. This should be a list of server IDs separated by spaces.',
+										this.settings.override,
+										e => {
+											this.settings.override = e;
+										},
+									),
+								),
+							);
+						}
+					};
+				};
+				return plugin(Plugin, Api);
+		  })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
