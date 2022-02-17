@@ -1,3 +1,4 @@
 # DefaultReplyPing
 
-BetterDiscord plugin to change the default reply ping setting.
+BetterDiscord plugin to change the default reply ping setting per-server.
+[Powercord Version](https://github.com/asportnoy/pc-DefaultReplyPing)
