@@ -4,8 +4,8 @@
  * @authorLink undefined
  * @donate undefined
  * @patreon undefined
- * @website https://github.com/asportnoy/defaultreplyping
- * @source https://raw.githubusercontent.com/asportnoy/defaultreplyping/main/DefaultReplyPing.plugin.js
+ * @website https://github.com/asportnoy/defaultreplyping-betterdiscord
+ * @source https://raw.githubusercontent.com/asportnoy/defaultreplyping-betterdiscord/main/DefaultReplyPing.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
